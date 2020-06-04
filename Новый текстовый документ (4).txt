@@ -1,0 +1,219 @@
+CREATE TABLE Department
+(
+	Department_name VARCHAR2(50),
+	Director VARCHAR2(50) NOT NULL,
+    CONSTRAINT  XPKDepartment PRIMARY KEY (Department_name)
+);
+
+
+CREATE TABLE Zone
+(
+    Zone_code INTEGER,
+	Department_name VARCHAR2(50),
+	area INTEGER NOT NULL,
+    CONSTRAINT  XPKZZone PRIMARY KEY (Zone_code)
+);
+ALTER TABLE Zone ADD CONSTRAINT Zone_Department_fk FOREIGN KEY ( Department_name ) 
+REFERENCES Department ( Department_name );
+
+CREATE TABLE Address
+(
+    Zone_code INTEGER,
+	Address_name VARCHAR(50),
+    CONSTRAINT  XPKAddress PRIMARY KEY (Address_name)
+);
+ALTER TABLE Address ADD CONSTRAINT Address_Zone_fk FOREIGN KEY (Zone_code) REFERENCES Zone (Zone_code);
+
+
+CREATE TABLE Type_S
+(
+	Type_ID INTEGER,
+	Type_name VARCHAR2(50) NOT NULL,
+    CONSTRAINT  XPKType_S PRIMARY KEY (Type_ID)
+);
+
+CREATE TABLE Object_Save
+(
+    Object_code INTEGER,
+	Type_ID INTEGER,
+	Name_O VARCHAR2(50) NOT NULL,
+    area INTEGER NOT NULL, 
+    price NUMBER NOT NULL,
+    CONSTRAINT  XPKObject PRIMARY KEY (Object_code)
+);
+ALTER TABLE Object_Save ADD CONSTRAINT Object_Save_Type_S_fk FOREIGN KEY (Type_ID) REFERENCES Type_S (Type_ID);
+
+
+CREATE TABLE Employee
+(
+    Employee_ID INTEGER, 
+    Object_code INTEGER,
+    Surname VARCHAR2(50) NOT NULL, 
+    Name VARCHAR2(50) NOT NULL, 
+    Middle_name VARCHAR2(50) NOT NULL, 
+    Date_of_birth DATE  NOT NULL ,
+    Residential_address VARCHAR2(50) NOT NULL, 
+    First_phone INTEGER NOT NULL,
+    Second_phone INTEGER NOT NULL,
+    Department_name VARCHAR2(50) NOT NULL,
+    CONSTRAINT  XPKEmployee PRIMARY KEY (Employee_ID)   
+);
+ALTER TABLE Employee ADD CONSTRAINT Employee_Object_Save_fk FOREIGN KEY ( Object_code ) 
+REFERENCES Object_Save ( Object_code );
+ALTER TABLE Employee ADD CONSTRAINT Employee_Department_fk FOREIGN KEY ( Department_name ) 
+REFERENCES Department ( Department_name );
+
+CREATE TABLE Position_Save
+(
+    Position_name VARCHAR2(20), 
+    salary NUMBER NOT NULL, 
+    number_of_bids INTEGER NOT NULL,
+    CONSTRAINT  XPKPosition PRIMARY KEY (Position_name)
+);
+
+CREATE TABLE History
+(
+    Employee_ID INTEGER, 
+    Position_name VARCHAR2(50), 
+    date_of_appointment DATE, 
+    date_of_withdrawal DATE,
+    CONSTRAINT  XPKHistory PRIMARY KEY (Position_name,date_of_appointment,Employee_ID)
+);
+ALTER TABLE History ADD CONSTRAINT History_Position_Save_fk FOREIGN KEY ( Position_name ) 
+REFERENCES Position_Save ( Position_name );
+ALTER TABLE History ADD CONSTRAINT History_Employee_fk FOREIGN KEY ( Employee_ID ) 
+REFERENCES Employee ( Employee_ID );
+
+CREATE SEQUENCE Employee_Seq
+INCREMENT BY 1
+START WITH 1
+NOCYCLE;
+
+CREATE SEQUENCE Type_S_Seq
+INCREMENT BY 1
+START WITH 1
+NOCYCLE;
+
+CREATE SEQUENCE Zone_Seq
+INCREMENT BY 1
+START WITH 1
+NOCYCLE;
+
+CREATE SEQUENCE Object_Save_Seq
+INCREMENT BY 1
+START WITH 1
+NOCYCLE;
+-------------
+
+CREATE SEQUENCE Type_S_Seq
+MINVALUE 0;
+INSERT INTO Type_S (Type_id, Type_name)  VALUES (Type_S_seq.NEXTVAL, 'секретные');
+INSERT INTO Type_S (Type_id, Type_name)  VALUES (Type_S_seq.NEXTVAL, 'общеизвестные');
+INSERT INTO Type_S (Type_id, Type_name)  VALUES (Type_S_seq.NEXTVAL, 'общедоступные');
+COMMIT;
+
+CREATE SEQUENCE Department_Seq
+MINVALUE 0;
+INSERT INTO Department (Department_name, Director)  VALUES ('Восход', 'Иван Иванов');
+INSERT INTO Department (Department_name, Director)  VALUES ('Волк', 'Михаил Валежкин');
+INSERT INTO Department (Department_name, Director)  VALUES ('Буря', 'Дмитрий Глухов');
+INSERT INTO Department (Department_name, Director)  VALUES ('Закат', 'Владимир Пустовый');
+COMMIT;
+
+CREATE SEQUENCE Zone_Seq
+MINVALUE 0;
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Волк', 35);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Буря', 350);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Волк', 25);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Закат', 69);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Закат', 17);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Закат', 69);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Восход', 34);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Волк', 135);
+INSERT INTO Zone (Zone_code, Department_name, area )  VALUES (Zone_seq.NEXTVAL,'Буря', 335);
+COMMIT;
+
+CREATE SEQUENCE Address_Seq
+MINVALUE 0;
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (1, 'Проспект восстания, 3');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (2, 'Проспект овощей, 2');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (1, 'Улица поверхностная, 4');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (4, 'Проспект труда, 3');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (3, 'Улица космодесанта, 6');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (5, 'Проспект памяти мезозоя, 31');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (6, 'пустырь за городом, 1');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (6, 'пустырь за городом, 2');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (9, '[УДАЛЕНО]');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (8, 'Проспект насекомых, 18');
+INSERT INTO Address (Zone_code,Adress_name)  VALUES (7, 'Улица запорожная, 14');
+COMMIT;
+	
+CREATE SEQUENCE Object_Save_Seq
+MINVALUE 0;
+INSERT INTO Object_Save (Object_code,Type_ID,Name_O,area,price)  VALUES (Object_Save_seq.NEXTVAL,1, 'Парк юрского периода', 12323, 1000);
+INSERT INTO Object_Save (Object_code,Type_ID,Name_O,area,price)  VALUES (Object_Save_seq.NEXTVAL,1, 'Звезда смерти', 430000, 1000000000);
+INSERT INTO Object_Save (Object_code,Type_ID,Name_O,area,price)  VALUES (Object_Save_seq.NEXTVAL,2, 'Парк независимых', 765, 34660);
+INSERT INTO Object_Save (Object_code,Type_ID,Name_O,area,price)  VALUES (Object_Save_seq.NEXTVAL,2, 'Памятник кому-то', 12, 1000);
+INSERT INTO Object_Save (Object_code,Type_ID,Name_O,area,price)  VALUES (Object_Save_seq.NEXTVAL,3, 'Диснейленд', 1233, 70000);
+COMMIT;   
+
+CREATE SEQUENCE Employee_Seq
+MINVALUE 0;
+INSERT INTO Employee (Employee_ID,Object_code,Surname,Name,Middle_name,Date_of_birth,Residential_address,First_phone,
+Second_phone,Department_name)  
+VALUES (Employee_seq.NEXTVAL,1,'Иванов','Иван','Петрович',date'1980-07-02','Улица космонавтов, 4',88005553535,
+866666666,'Восход');
+INSERT INTO Employee (Employee_ID,Object_code,Surname,Name,Middle_name,Date_of_birth,Residential_address,First_phone,
+Second_phone,Department_name)  
+VALUES (Employee_seq.NEXTVAL,1,'Ложкин','Константин','Петрович',date'1970-03-01','Улица героев труда, 23',88005565535,
+845566666,'Закат');
+INSERT INTO Employee (Employee_ID,Object_code,Surname,Name,Middle_name,Date_of_birth,Residential_address,First_phone,
+Second_phone,Department_name)  
+VALUES (Employee_seq.NEXTVAL,2,'Валежкин','Михаил','Петрович',date'1965-04-02','Улица космонавтов, 42',8686767678,
+866687867,'Волк');
+INSERT INTO Employee (Employee_ID,Object_code,Surname,Name,Middle_name,Date_of_birth,Residential_address,First_phone,
+Second_phone,Department_name)  
+VALUES (Employee_seq.NEXTVAL,4,'Пустовый','Владимир','Владимирович',date'1980-07-22','Улица космонавтов, 14',887565635,
+866655544,'Закат');
+INSERT INTO Employee (Employee_ID,Object_code,Surname,Name,Middle_name,Date_of_birth,Residential_address,First_phone,
+Second_phone,Department_name)  
+VALUES (Employee_seq.NEXTVAL,3,'Глухов','Дмитрий','Петрович',date'1960-01-12','Улица космонавтов, 34',887654455,
+865432345,'Буря');
+INSERT INTO Employee (Employee_ID,Object_code,Surname,Name,Middle_name,Date_of_birth,Residential_address,First_phone,
+Second_phone,Department_name)  
+VALUES (Employee_seq.NEXTVAL,5,'Иванов','Иван','Петрович',date'1995-07-05','Улица космонавтов, 5',855555555,
+845464676,'Буря');
+COMMIT;
+
+CREATE SEQUENCE History_Seq
+MINVALUE 0;
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (1, 'Начальник отдела', date'2010-07-02',null);
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (3, 'Начальник отдела', date'2008-03-06',null);
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (4, 'Начальник отдела', date'2011-01-01',null);
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (5, 'Начальник отдела', date'2011-07-12',null);
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (2, 'Начальник охраны', date'2010-07-02',null);
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (6, 'Начальник отдела', 
+date'2000-07-02',date'2011-07-12');
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (6, 'Помощник начальника', 
+date'2010-07-02',date'2014-03-12');
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (6, 'Дворник', date'2014-03-12',null);
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (1, 'Охранник', date'2000-07-02',
+date'2007-01-01');
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (1, 'Начальник охраны', date'2007-01-01',
+date'2010-07-02');
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (2, 'Связист', date'2005-04-23',
+date'2010-07-02');
+INSERT INTO History (Employee_ID,Position_name,date_of_appointment,date_of_withdrawal)  VALUES (4, 'Завхоз',date'2001-07-02',
+date'2011-01-01');
+COMMIT;
+
+CREATE SEQUENCE Position_Save_Seq
+MINVALUE 0;
+INSERT INTO Position (Position_name, salary, number_of_bids)  VALUES ('Завхоз',10000,3);
+INSERT INTO Position (Position_name, salary, number_of_bids)  VALUES ('Начальник охраны',20000,5);
+INSERT INTO Position (Position_name, salary, number_of_bids)  VALUES ('Охранник',15000,4);
+INSERT INTO Position (Position_name, salary, number_of_bids)  VALUES ('Начальник отдела',45000,4);
+INSERT INTO Position (Position_name, salary, number_of_bids)  VALUES ('Помощник начальника',40000,4);
+INSERT INTO Position (Position_name, salary, number_of_bids)  VALUES ('Дворник',5000,2);
+INSERT INTO Position (Position_name, salary, number_of_bids)  VALUES ('Связист',30000,4);
+COMMIT;
